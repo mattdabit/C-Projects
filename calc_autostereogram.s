@@ -31,12 +31,12 @@ calc_autostereogram:
         lw $s4 36($sp)
 
         # YOUR CODE HERE #
-        li $t0 0 # i
-        li $t1 0 # j
+        li $t0 0 # i = 0
 ifor:	
 	beq $t0 $s2 endcalc
+	li $t1 0 # j = 0
 jfor:
-	beq $t1 $s3 endfor
+	beq $t1 $s3 endifor
 	
 	multu $t1 $s2 # getIndex starts here; hilo = j * width
 	mflo $t3
@@ -62,7 +62,7 @@ jfor:
 	and $v0 $v0 0xFF
 	addu $t3 $s0 $t3 # t3 = address of I(i, j)
 	sb $v0 0($t3) # autogram[i, j] = v0 (random)
-	
+	j endjfor
 else:
 	addu $t4 $s1 $t3 # t4 = address of depth(i, j)
 	lb $t4 0($t4) # t4 = depth(i, j)
@@ -78,10 +78,10 @@ else:
 	
 	addu $t3 $s0 $t3 # t3 is address of I(i, j)
 	sb $t5 0($t3) # I(i, j) = t5
-	
+endjfor:	
 	addiu $t1 $t1 1 # j++
 	j jfor
-endfor:
+endifor:
 	addiu $t0 $t0 1 # i++
 	j ifor
 	
