@@ -42,8 +42,8 @@ jfor:
 	mflo $t3
 	addu $t3 $t3 $t0 # t3 = j * width + i
 	
-	slt $t2 $t1 $s4 
-	bne $t2 0 else # if i < S
+	slt $t2 $t0 $s4 
+	beq $t2 0 else # if i < S
 	
 	addiu $sp $sp -20 # store temp variables
 	sw $ra 0($sp)
@@ -59,9 +59,9 @@ jfor:
 	lw $t3 16($sp)
 	addiu $sp $sp 20
 	
-	and $v0 $v0 0xFF
+	and $t4 $v0 0xFF
 	addu $t3 $s0 $t3 # t3 = address of I(i, j)
-	sb $v0 0($t3) # autogram[i, j] = v0 (random)
+	sb $t4 0($t3) # autogram[i, j] = v0 (random)
 	j endjfor
 else:
 	addu $t4 $s1 $t3 # t4 = address of depth(i, j)
