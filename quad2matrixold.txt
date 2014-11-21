@@ -1,0 +1,65 @@
+.text
+
+# Decodes a quadtree to the original matrix
+#
+# Arguments:
+#     quadtree (qNode*) = a0
+#     matrix (void*) = a1
+#     matrix_width (int)  = a2
+#
+# Recall that quadtree representation uses the following format:
+#     struct qNode {
+#         int leaf; 0
+#         int size; 4
+#         int x; 8
+#         int y; 12
+#         int gray_value; 16
+#         qNode *child_NW, *child_NE, *child_SE, *child_SW; 20 = first child
+#     }
+
+quad2matrix:
+        # YOUR CODE HERE #
+        li $s0 1 # s0 = potential number of nodes
+        li $s1 1 # s1 = whether we are at the root or not
+quad2matrixstart:
+	li $t0 256
+	lw $t1 0($a0) # leaf 
+	lw $t2 4($a0) # size
+	lw $t3 8($a0) # x
+	lw $t4 12($a0) # y 
+	lw $t5 16($a0) # gray_value
+	beq $t5 $t0 recurse #if (gray_value == 256)
+	addu $t8 $t2 $t3 # t8 = x + size
+	addiu $t8 $t8 1
+	addu $t9 $t2 $t4 # t9 = y + size
+	addiu $t9 $t9 1
+ifor:
+	beq $t3 $t8 endbasecase # if i == x + size + 1 endloop , $t3 = i = x initially
+	addiu $t7 $t4 0 # j = y
+jfor:
+	beq $t7 $t9 endjfor # if j == y + size + 1
+	multu $t7 $a2 # getIndex starts here; hilo = j * width
+	mflo $t6
+	addu $t6 $t6 $t3 # t3 = j * width + i
+	addu $t6 $t6 $a1 # t6 = address of [i , j]
+	sw $t5 0($t6) # matrix[i, j] = gray_value
+	addiu $t7 $t7 1 # j++
+	j jfor
+endjfor:
+	addiu $t3 $t3 1 # i++
+	j ifor
+recurse: # there are 4 children, recurse through them
+	addiu $s0 $s0 3 # -1 for the parent + 4 for the children
+	addiu $a0 $a0 20
+	li $s1 0 # we are no longer at the root
+	j quad2matrixstart
+endbasecase:
+	addiu $s0 $s0 -1
+	beq $s1 0 notroot
+	bne $t1 0 return # we are at the root and the root is a leaf
+notroot:
+	beq $s0 0 return
+	addiu $a0 $a0 20
+	j quad2matrixstart
+return:
+        jr $ra

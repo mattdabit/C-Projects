@@ -1,0 +1,4 @@
+#!/bin/bash
+xrandr -s 1920x1080
+/home/matt/Documents/CS61C/proj1-2/mars
+xrandr -s 3200x1800

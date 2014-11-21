@@ -1,6 +1,6 @@
 .data
 
-.include    "quad2matrix_data.s"
+.include    "q.s"
 
 matrix:
             .align 4
